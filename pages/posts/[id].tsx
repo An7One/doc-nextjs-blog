@@ -3,25 +3,40 @@ import Date from "../../components/date";
 import Layout from "../../components/layout";
 import utilStyles from "../../styles/utils.module.css";
 import { getAllPostIds, getPostData } from "../../lib/posts";
+import { GetStaticProps, GetStaticPaths } from "next";
+import { ParsedUrlQuery } from "querystring";
 
-export async function getStaticProps({ params }) {
-  const postData = await getPostData(params.id);
+interface IParams extends ParsedUrlQuery {
+  id: string;
+}
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const { id } = context.params as IParams;
+  const postData = await getPostData(id);
   return {
     props: {
       postData,
     },
   };
-}
+};
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = () => {
   const paths = getAllPostIds();
   return {
     paths,
     fallback: false,
   };
-}
+};
 
-export default function Post({ postData }) {
+const Post = ({
+  postData,
+}: {
+  postData: {
+    title: string;
+    date: string;
+    contentHtml: string;
+  };
+}) => {
   const { title, date, contentHtml } = postData;
   return (
     <Layout>
@@ -35,4 +50,6 @@ export default function Post({ postData }) {
       </article>
     </Layout>
   );
-}
+};
+
+export default Post;

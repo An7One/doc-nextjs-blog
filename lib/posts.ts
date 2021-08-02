@@ -6,7 +6,7 @@ import remark from "remark";
 
 const postsDirectory = path.join(process.cwd(), "fakedata");
 
-export function getSortedPostsData() {
+export const getSortedPostsData = () => {
   // to get file names under /fakedata
   const fileNames = fs.readdirSync(postsDirectory);
   const allPostsData = fileNames.map((fileName) => {
@@ -23,11 +23,11 @@ export function getSortedPostsData() {
     // to combine the data with the ID
     return {
       id,
-      ...matterResult.data,
+      ...(matterResult.data as { date: string; title: string }),
     };
   });
 
-  return allPostsData.sort(({ date: a }, { date: b }) => {
+  return allPostsData.sort((a, b) => {
     if (a < b) {
       return 1;
     } else if (a > b) {
@@ -36,9 +36,9 @@ export function getSortedPostsData() {
       return 0;
     }
   });
-}
+};
 
-export function getAllPostIds() {
+export const getAllPostIds = () => {
   const fileNames = fs.readdirSync(postsDirectory);
 
   return fileNames.map((fileName) => {
@@ -48,9 +48,9 @@ export function getAllPostIds() {
       },
     };
   });
-}
+};
 
-export async function getPostData(id) {
+export const getPostData = async (id: string) => {
   const fullPath = path.join(postsDirectory, `${id}.md`);
   const fileContent = fs.readFileSync(fullPath, "utf8");
 
@@ -67,6 +67,6 @@ export async function getPostData(id) {
   return {
     id,
     contentHtml,
-    ...matterResult.data,
+    ...(matterResult.data as { date: string; title: string }),
   };
-}
+};
